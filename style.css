@@ -1,0 +1,133 @@
+body {
+    background-color: #0f0c1b;
+    color: #e2dbcd;
+    font-family: 'VT323', monospace;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.6rem;
+    color: #4cd3c2;
+    text-shadow: 3px 3px 0px #000;
+    margin: 5px 0;
+}
+
+.subtitulo {
+    font-size: 1.2rem;
+    color: #8b80a0;
+    margin: 0;
+}
+
+/* HUD Superior em formato de barra de RPG */
+.HUD-container {
+    display: flex;
+    justify-content: space-around;
+    width: 800px;
+    max-width: 100%;
+    background-color: #1c162e;
+    border: 4px solid #362b58;
+    padding: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0px 5px 0px #000;
+}
+
+.hud-item {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: #fff;
+}
+
+#prod-val { color: #ff5252; }
+#sust-val { color: #2ecc71; }
+#agua-val { color: #3498db; }
+
+#canvas-holder {
+    border: 6px solid #362b58;
+    box-shadow: 0px 6px 0px #000;
+    line-height: 0;
+    margin-bottom: 20px;
+}
+
+/* Painel de Controle de Ações */
+.painel-comando {
+    width: 800px;
+    max-width: 100%;
+    background-color: #171226;
+    border: 4px solid #362b58;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 0px #000;
+}
+
+h2 {
+    margin-top: 0;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.85rem;
+    color: #f1c40f;
+    text-shadow: 2px 2px 0px #000;
+}
+
+#feedback-texto {
+    font-size: 1.4rem;
+    color: #a29bfe;
+    margin-bottom: 15px;
+    background: #0f0c1b;
+    padding: 10px;
+    border-left: 5px solid #f1c40f;
+}
+
+/* Grade de Botões de Ação */
+.grade-botoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #2a2044;
+    color: #fff;
+    border: 3px solid #483775;
+    padding: 14px;
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0px 4px 0px #000;
+}
+
+button:hover {
+    background-color: #392b5c;
+    border-color: #614a9c;
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0px 2px 0px #000;
+}
+
+/* Botão de Finalizar Turno */
+#btn-passar-dia {
+    width: 100%;
+    text-align: center;
+    background-color: #27ae60;
+    border-color: #2ece71;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 15px;
+}
+
+#btn-passar-dia:hover {
+    background-color: #2ece71;
+}
