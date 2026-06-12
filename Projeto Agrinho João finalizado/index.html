@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abigail: Alvorada Eco-RPG (Estações & Vida)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+
+    <style>
+        body {
+            background-color: #1b120c;
+            background-image: radial-gradient(#2d1e13 10%, transparent 11%);
+            background-size: 16px 16px;
+            color: #f3e9dc;
+            font-family: 'VT323', monospace;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            color: #ffcc00;
+            text-shadow: 
+                2px 2px 0px #7a3d00, 
+                4px 4px 0px #3a1a00,
+                6px 6px 0px #000;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .subtitulo {
+            font-size: 1.3rem;
+            color: #d4a373;
+            text-shadow: 1px 1px 0px #000;
+            font-weight: bold;
+        }
+
+        .HUD-container {
+            display: flex;
+            justify-content: space-around;
+            width: 800px;
+            max-width: 100%;
+            background-color: #f7e6c4;
+            border: 4px solid #7c4a22;
+            outline: 2px solid #3d200a;
+            padding: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0px 6px 0px #000;
+            box-sizing: border-box;
+        }
+
+        .hud-item {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.75rem;
+            color: #5c3818;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        #prod-val { color: #cc2a36; text-shadow: none; font-weight: bold; }
+        #sust-val { color: #4f9d69; text-shadow: none; font-weight: bold; }
+        #agua-val { color: #2b7a94; text-shadow: none; font-weight: bold; }
+        #racao-val { color: #b35400; text-shadow: none; font-weight: bold; }
+
+        #canvas-holder {
+            border: 6px solid #7c4a22;
+            outline: 3px solid #3d200a;
+            box-shadow: 0px 8px 0px #000;
+            line-height: 0;
+            margin-bottom: 25px;
+            background-color: #000;
+            position: relative;
+        }
+
+        .painel-comando {
+            width: 800px;
+            max-width: 100%;
+            background-color: #f7e6c4;
+            border: 5px solid #7c4a22;
+            outline: 3px solid #3d200a;
+            padding: 25px;
+            box-sizing: border-box;
+            box-shadow: 0px 6px 0px #000;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: #b35400;
+            text-shadow: 1px 1px 0px #fff;
+            line-height: 1.5;
+            border-bottom: 2px dashed #7c4a22;
+            padding-bottom: 8px;
+        }
+
+        #feedback-texto {
+            font-size: 1.7rem;
+            color: #3d200a;
+            margin-bottom: 20px;
+            background: #e9d5af;
+            padding: 15px;
+            border: 2px solid #bc9a6c;
+            border-radius: 4px;
+            line-height: 1.4;
+            min-height: 70px;
+        }
+
+        .grade-botoes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #dd9c5b;
+            color: #3d200a;
+            border: 3px solid #fce1b6;
+            border-bottom: 4px solid #9e5a24;
+            outline: 2px solid #3d200a;
+            padding: 14px;
+            font-family: 'VT323', monospace;
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0px 4px 0px #000;
+            transition: all 0.1s;
+        }
+
+        button:hover { background-color: #e5aa6e; color: #000; }
+        button:active { transform: translateY(2px); border-bottom-width: 2px; box-shadow: 0px 2px 0px #000; }
+
+        #btn-passar-dia {
+            width: 100%;
+            text-align: center;
+            background-color: #729d39;
+            color: #fff;
+            border-color: #a4cc6c;
+            border-bottom: 5px solid #41611c;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 16px;
+            box-sizing: border-box;
+            text-shadow: 2px 2px 0px #223b07;
+        }
+
+        #btn-iniciar-jogo {
+            width: 100%;
+            text-align: center;
+            background-color: #e59866;
+            color: #3d200a;
+            border: 4px solid #f5b041;
+            border-bottom: 6px solid #af601a;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 1px 1px 0px #fff;
+            box-shadow: 0px 6px 0px #000;
+            cursor: pointer;
+        }
+
+        .escondido { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ALVORADA ECO-RPG</h1>
+        <p class="subtitulo">Abigail & O Legado das Três Estações</p>
+    </header>
+
+    <div id="hud-jogo" class="escondido">
+        <div class="HUD-container">
+            <div class="hud-item">DIA: <span id="dia-val" style="color:#3d200a;">1</span>/50</div>
+            <div class="hud-item">PROD: <span id="prod-val">50%</span></div>
+            <div class="hud-item">SUST: <span id="sust-val">50%</span></div>
+            <div class="hud-item">RECURSOS: <span id="agua-val">100L</span></div>
+            <div class="hud-item">RAÇÃO: <span id="racao-val">3 kg</span></div>
+        </div>
+    </div>
+
+    <div id="canvas-holder"></div>
+
+    <div id="painel-menu" class="painel-comando">
+        <h2>Simulador Vivo: Estações, Visuais e Animais</h2>
+        <div style="font-size: 1.6rem; color: #3d200a; margin-bottom: 20px; line-height: 1.4;">
+            Vivencie o ciclo da natureza. Gerencie a fazenda enquanto observa as mudanças visuais da Primavera, Outono e Inverno diretamente no cenário em pixel art!
+        </div>
+        <button id="btn-iniciar-jogo" onclick="clicouIniciar()">🎮 INICIAR CAMPANHA VIVA</button>
+    </div>
+
+    <div id="painel-controle" class="painel-comando escondido">
+        <h2 id="titulo-painel">Menu de Ações da Fazenda</h2>
+        <div id="feedback-texto"></div>
+        
+        <div id="acoes-padrao" class="grade-botoes">
+            <button onclick="executarAcao('trator')">🚜 Trator Químico (+Prod / -Sust)</button>
+            <button onclick="executarAcao('direto')">🌱 Plantio Direto (+Sust / +Solo)</button>
+            <button onclick="executarAcao('drone')">🛸 Drone de Irrigação (-Recursos / +Crescer)</button>
+            <button onclick="executarAcao('ilpf')">🌳 Plantar Árvore Nativa (+Sust / Evita Seca)</button>
+            <button onclick="executarAcao('composto')">🍂 Adubo de Compostagem (+Sust)</button>
+            <button id="btn-cidade" onclick="executarAcao('cidade')" style="background-color: #b0c4de;">🏙️ Ir à Cidade (Apenas Dias Ímpares)</button>
+        </div>
+
+        <div id="acoes-evento" class="grade-botoes escondido">
+            <button onclick="decidirEvento(true)" style="background-color: #4f9d69; color: #fff;">🤝 Aceitar Proposta</button>
+            <button onclick="decidirEvento(false)" style="background-color: #cc2a36; color: #fff;">❌ Recusar e Dispensar</button>
+        </div>
+
+        <button id="btn-passar-dia" onclick="passarDia()">⏳ Passar para o Próximo Dia</button>
+    </div>
+
+    <script>
+        // --- VARIÁVEIS DO JOGO ---
+        let estadoJogo = "MENU"; 
+        let dia = 1, produtividade = 50, sustentabilidade = 50, aguaRecursos = 100, racaoVacas = 3;
+        let quantidadeArvores = 1, alturaPlantas = 8, expressaoAbigail = "neutra";
+        let estacaoAtual = "primavera";
+        
+        let textoCompleto = "Abigail: 'Seja bem-vindo de volta! Vamos iniciar nosso plantio de Primavera cuidando das nossas plantas e alimentando as vacas?'";
+        let textoParcial = ""; let caractereIndex = 0;
+        let nuvemX1 = 20, nuvemX2 = 130, tratorX = -40, tratorAtivo = false, modoEfeitoEspecial = "nenhum";
+        let emEventoDeEscolha = false;
+        
+        let animais = [];
+        let folhasOutono = []; 
+
+        function clicouIniciar() {
+            estadoJogo = "JOGANDO";
+            
+            document.getElementById("painel-menu").classList.add("escondido");
+            document.getElementById("hud-jogo").classList.remove("escondido");
+            document.getElementById("painel-controle").classList.remove("escondido");
+            
+            animais.push({x: 25, y: 45, tipo: 'galinha', vx: 0.1, timer: 30});
+            animais.push({x: 75, y: 41, tipo: 'vaca', vx: 0.04, timer: 50});
+            animais.push({x: 120, y: 45, tipo: 'galinha', vx: -0.1, timer: 20});
+
+            for(let i=0; i<12; i++) {
+                folhasOutono.push({x: random(40, 190), y: random(0, 25), velY: random(0.2, 0.4), velX: random(-0.1, 0.1)});
+            }
+            atualizarInterface();
+        }
+
+        function verificarBiodiversidade() {
+            if (sustentabilidade > 75 && animais.length < 5 && random() < 0.2) {
+                let tipoNovo = random(['galinha', 'vaca']);
+                let ySurgir = tipoNovo === 'vaca' ? 41 : 45;
+                animais.push({x: random(60, 120), y: ySurgir, tipo: tipoNovo, vx: random(-0.04, 0.04), timer: 40});
+            }
+        }
+
+        function mudarTexto(novoTexto) { textoCompleto = novoTexto; textoParcial = ""; caractereIndex = 0; }
+
+        function executarAcao(tipo) {
+            if (dia > 50 || tratorAtivo || emEventoDeEscolha) return;
+            
+            if (tipo === 'cidade') {
+                if (dia % 2 === 0) {
+                    mudarTexto("Abigail: 'A balsa para a cidade está fechada hoje! Só podemos viajar em dias ÍMPARES.'");
+                    expressaoAbigail = "preocupada"; return;
+                }
+                racaoVacas += 4;
+                mudarTexto("Abigail: 'Fomos ao armazém central comprar +4 kg de ração para manter nossas vacas alimentadas!'");
+                atualizarInterface();
+                return;
+            }
+
+            if (aguaRecursos <= 0 && tipo === 'drone') {
+                mudarTexto("Abigail: 'Nosso reservatório secou! Use o plantio direto ou aguarde chuva.'");
+                expressaoAbigail = "preocupada"; return;
+            }
+            modoEfeitoEspecial = tipo;
+
+            if (tipo === "trator") {
+                tratorX = -30; tratorAtivo = true; expressaoAbigail = "preocupada";
+                produtividade = Math.min(produtividade + 12, 100); sustentabilidade = Math.max(sustentabilidade - 8, 0);
+                mudarTexto("Abigail: 'O trator acelera a colheita, mas compacta a terra e afasta nossas galinhas e vacas.'");
+            } else if (tipo === "direto") {
+                expressaoAbigail = "feliz";
+                sustentabilidade = Math.min(sustentabilidade + 10, 100);
+                mudarTexto("Abigail: 'Plantio direto feito! Mantemos a palhada protegendo o solo e retendo umidade.'");
+            } else if (tipo === "drone") {
+                expressaoAbigail = "feliz";
+                aguaRecursos = Math.max(aguaRecursos - 20, 0); alturaPlantas = Math.min(alturaPlantas + 3, 14);
+                produtividade = Math.min(produtividade + 4, 100);
+                mudarTexto("Abigail: 'Drone fazendo a micro-irrigação cirúrgica por cima das plantas!'");
+            } else if (tipo === "ilpf") {
+                expressaoAbigail = "feliz";
+                quantidadeArvores = Math.min(quantidadeArvores + 1, 6); sustentabilidade = Math.min(sustentabilidade + 8, 100);
+                mudarTexto("Abigail: 'Mais uma árvore nativa! Elas criam sombras confortáveis para o gado descansar.'");
+            } else if (tipo === "composto") {
+                expressaoAbigail = "feliz";
+                sustentabilidade = Math.min(sustentabilidade + 12, 100);
+                mudarTexto("Abigail: 'Adubo orgânico distribuído! O solo está ganhando nutrientes vivos.'");
+            }
+            verificarBiodiversidade();
+            atualizarInterface();
+        }
+
+        function passarDia() {
+            if (dia >= 50) { location.reload(); return; }
+            if (emEventoDeEscolha) { mudarTexto("Abigail: 'Precisamos responder antes de avançar para a próxima alvorada!'"); return; }
+
+            if (racaoVacas > 0) {
+                racaoVacas--;
+                produtividade = Math.min(produtividade + 2, 100);
+            } else {
+                sustentabilidade = Math.max(sustentabilidade - 5, 0);
+                mudarTexto("⚠️ ALERTA DE FOME: 'Ficamos sem ração! As vacas pastaram excessivamente e degradaram o solo. Vá à cidade em um dia ímpar comprar ração!'");
+                expressaoAbigail = "preocupada";
+                racaoVacas = 0; atualizarInterface(); return;
+            }
+
+            dia++;
+            modoEfeitoEspecial = "nenhum";
+            if (dia > 50) { finalizarSimulacao(); return; }
+
+            if (dia <= 15) estacaoAtual = "primavera";
+            else if (dia <= 35) estacaoAtual = "outono";
+            else estacaoAtual = "inverno";
+
+            if (dia === 5) {
+                if (quantidadeArvores < 3) {
+                    alturaPlantas = Math.max(alturaPlantas - 3, 2); expressaoAbigail = "preocupada";
+                    mudarTexto("❄️ GEADA: 'O frio da madrugada queimou os brotos. Precisamos de mais árvores para proteger a lavoura!'");
+                } else {
+                    expressaoAbigail = "feliz"; mudarTexto("🌲 BARREIRA NATURAL: 'A geada caiu, mas nossas árvores seguraram o frio e salvaram as plantações!'");
+                }
+                atualizarInterface(); return;
+            }
+
+            if (dia === 22) {
+                modoEfeitoEspecial = "festival";
+                if (produtividade >= 60) {
+                    expressaoAbigail = "feliz"; aguaRecursos = Math.min(aguaRecursos + 50, 200);
+                    mudarTexto("🎉 FESTIVAL DO OUTONO: 'Os vizinhos vieram nos canteiros celebrar! Com nossa alta produtividade, ganhamos +50L de água!'");
+                } else {
+                    expressaoAbigail = "neutra"; mudarTexto("🍂 FESTIVAL DO OUTONO: 'Os vizinhos nos visitaram, mas nossa produção ainda está tímida para ganhar prêmios.'");
+                }
+                atualizarInterface(); return;
+            }
+
+            if (dia === 30) {
+                emEventoDeEscolha = true; modoEfeitoEspecial = "vendedor";
+                document.getElementById("acoes-padrao").classList.add("escondido");
+                document.getElementById("acoes-evento").classList.remove("escondido");
+                document.getElementById("titulo-painel").innerText = "🛒 Negociação com o Caixeiro-Viajante";
+                mudarTexto("Abigail: 'O mercante oferece abastecer +80L de água se deixarmos a carroça pesada cortar caminho pela plantação (-10% Sustentabilidade).'");
+                atualizarInterface(); return;
+            }
+
+            if (dia % 2 === 0) {
+                modoEfeitoEspecial = "chuva";
+                if (sustentabilidade >= 45) {
+                    aguaRecursos = Math.min(aguaRecursos + 15, 200); alturaPlantas = Math.min(alturaPlantas + 2, 14);
+                    mudarTexto(`Abigail: 'Dia ${dia} (${estacaoAtual.toUpperCase()}). Chuva mansa excelente hidratando nossas folhas novas.'`);
+                } else {
+                    alturaPlantas = Math.max(alturaPlantas - 2, 1);
+                    mudarTexto(`Abigail: 'Dia ${dia}. Como o solo está sem raízes firmes, a enxurrada lavou a terra vermelha.'`);
+                }
+            } else {
+                mudarTexto(`Abigail: 'Dia ${dia} - Alvorada tranquila. Escolha o manejo do dia!'`);
+            }
+
+            setTimeout(() => { if(modoEfeitoEspecial === "chuva") modoEfeitoEspecial = "nenhum"; }, 600);
+            verificarBiodiversidade();
+            atualizarInterface();
+        }
+
+        function decidirEvento(aceitou) {
+            emEventoDeEscolha = false; modoEfeitoEspecial = "nenhum";
+            document.getElementById("acoes-evento").classList.add("escondido");
+            document.getElementById("acoes-padrao").classList.remove("escondido");
+            document.getElementById("titulo-painel").innerText = "Menu de Ações da Fazenda";
+
+            if (aceitou) {
+                aguaRecursos = Math.min(aguaRecursos + 80, 200); sustentabilidade = Math.max(sustentabilidade - 10, 0);
+                mudarTexto("Abigail: 'Aceitamos a água! As rodas da carroça amassaram o solo, mas o reservatório encheu.'");
+            } else {
+                expressaoAbigail = "feliz"; mudarTexto("Abigail: 'Priorizamos a saúde da nossa terra! O mascate entendeu e seguiu viagem.'");
+            }
+            atualizarInterface();
+        }
+
+        function finalizarSimulacao() {
+            document.getElementById("acoes-padrao").style.display = "none";
+            document.getElementById("btn-passar-dia").innerText = "🔄 RECOMEÇAR JOGO";
+            document.getElementById("titulo-painel").innerText = "Resultado Final da Jornada:";
+            estadoJogo = "FINAL";
+
+            if (produtividade >= 75 && sustentabilidade >= 75) {
+                expressaoAbigail = "feliz";
+                mudarTexto("Abigail: 'Incrível! Alcançamos a harmonia perfeita: produção farta, vacas gordas e ecologia preservada!'");
+            } else if (produtividade > sustentabilidade) {
+                expressaoAbigail = "preocupada";
+                mudarTexto("Abigail: 'A colheita deu lucro imediato, mas a terra ficou estéril e desgastada no fim.'");
+            } else {
+                expressaoAbigail = "preocupada";
+                mudarTexto("Abigail: 'Preservamos a natureza, mas faltou alimento comercializado para sustentar a estrutura. Falimos.'");
+            }
+        }
+
+        function atualizarInterface() {
+            document.getElementById("dia-val").innerText = dia;
+            document.getElementById("prod-val").innerText = produtividade + "%";
+            document.getElementById("sust-val").innerText = sustentabilidade + "%";
+            document.getElementById("agua-val").innerText = aguaRecursos + "L";
+            document.getElementById("racao-val").innerText = racaoVacas + " kg";
+
+            let btnCidade = document.getElementById("btn-cidade");
+            if (btnCidade) {
+                if (dia % 2 === 0) {
+                    btnCidade.style.backgroundColor = "#c0c0c0";
+                    btnCidade.innerText = "🏙️ Cidade Fechada (Dias Pares)";
+                } else {
+                    btnCidade.style.backgroundColor = "#b0c4de";
+                    btnCidade.innerText = "🏙️ Ir à Cidade (Comprar Ração)";
+                }
+            }
+        }
+
+        // --- MOTOR CANVAS P5.JS ---
+        function setup() {
+            let canvas = createCanvas(800, 300); canvas.parent('canvas-holder');
+            noStroke(); noSmooth();
+        }
+
+        function draw() {
+            if (estadoJogo !== "MENU" && caractereIndex < textoCompleto.length) {
+                if (frameCount % 2 === 0) {
+                    textoParcial += textoCompleto[caractereIndex]; caractereIndex++;
+                }
+                document.getElementById("feedback-texto").innerText = textoParcial;
+            }
+
+            scale(4); 
+
+            let corCeuTopo = color(95, 140, 215); let corCeuBase = color(240, 120, 80);
+            if (estacaoAtual === "outono") { corCeuTopo = color(180, 110, 75); corCeuBase = color(240, 180, 110); } 
+            else if (estacaoAtual === "inverno") { corCeuTopo = color(110, 140, 175); corCeuBase = color(220, 225, 235); }
+
+            for (let y = 0; y < 45; y++) {
+                let inter = map(y, 0, 45, 0, 1); fill(lerpColor(corCeuBase, corCeuTopo, inter)); rect(0, y, 200, 1);
+            }
+
+            // Nuvens
+            fill(255, 255, 255, estacaoAtual === "inverno" ? 90 : 150);
+            rect(nuvemX1, 7, 18, 4); rect(nuvemX1 + 4, 5, 10, 2);
+            rect(nuvemX2, 14, 22, 5); rect(nuvemX2 + 5, 12, 12, 2);
+            nuvemX1 += 0.04; nuvemX2 += 0.02;
+            if(nuvemX1 > 200) nuvemX1 = -20; if(nuvemX2 > 200) nuvemX2 = -25;
+
+            // Fundo e Solo
+            let corMontanha = estacaoAtual === "outono" ? color(115, 90, 70) : (estacaoAtual === "inverno" ? color(100, 115, 130) : color(70, 110, 95));
+            fill(corMontanha); rect(0, 30, 200, 15);
+
+            let corSolo = estacaoAtual === "outono" ? color(130, 95, 75) : (estacaoAtual === "inverno" ? color(85, 80, 85) : color(90, 60, 40));
+            fill(corSolo); rect(0, 45, 200, 12);
+            fill(40, 25, 15); rect(0, 57, 200, 18);
+
+            let corGrama = estacaoAtual === "outono" ? color(165, 115, 50) : (estacaoAtual === "inverno" ? color(225, 230, 240) : color(60, 155, 60)); 
+            fill(corGrama); rect(0, 45, 200, 2);
+
+            // Cerca
+            fill(100, 55, 20); for(let cx = 0; cx < 145; cx += 14) { rect(cx, 41, 2, 5); }
+            rect(0, 42, 145, 1); 
+
+            // Celeiro
+            fill(145, 35, 35); rect(6, 17, 36, 29);
+            fill(115, 25, 25); for(let tx = 9; tx < 42; tx += 4) { rect(tx, 17, 1, 29); }
+            fill(estacaoAtual === "inverno" ? color(240,240,250) : color(230, 230, 235)); rect(4, 14, 40, 3); rect(8, 11, 32, 3);
+            fill(85, 45, 20); rect(16, 31, 16, 15);
+
+            if (estacaoAtual === "inverno" && frameCount % 30 < 15) {
+                fill(255, 255, 255, 100); rect(32, 7, 2, 2); rect(33, 4, 3, 2);
+            }
+
+            // Árvores do Sistema ILPF
+            for (let i = 0; i < quantidadeArvores; i++) { desenharArvore(65 + (i * 12), 45); }
+
+            // Plantas
+            for (let px = 150; px < 200; px += 16) {
+                fill(55, 35, 20); rect(px + 2, 45, 8, 2); 
+                
+                let alt = alturaPlantas; 
+                if (tratorAtivo && tratorX + 24 > px) alt = Math.max(alt - 5, 2);
+                
+                let corPlanta = estacaoAtual === "outono" ? color(210, 140, 45) : (estacaoAtual === "inverno" ? color(95, 120, 110) : color(40, 185, 80));
+                let corFolhas = estacaoAtual === "outono" ? color(175, 100, 30) : (estacaoAtual === "inverno" ? color(70, 95, 85) : color(25, 140, 60));
+
+                fill(corPlanta); rect(px + 5, 45 - alt, 2, alt);
+                
+                if (alt > 4) {
+                    fill(corFolhas);
+                    rect(px + 3, 45 - Math.floor(alt*0.4), 2, 2); 
+                    rect(px + 7, 45 - Math.floor(alt*0.7), 2, 2);
+                }
+                
+                fill(corFolhas); rect(px + 4, 45 - alt - 2, 4, 3);
+                
+                if (alt >= 8 && estacaoAtual === "primavera") {
+                    fill(235, 50, 50); rect(px + 4, 45 - alt - 1, 1, 1); rect(px + 7, 45 - alt, 1, 1);
+                } else if (alt >= 8 && estacaoAtual === "outono") {
+                    fill(240, 120, 20); rect(px + 5, 44, 3, 2);
+                }
+            }
+
+            // Renderizar Vacas e Galinhas
+            if (estadoJogo === "JOGANDO") { atualizarERenderizarAnimais(); }
+
+            // Renderizar Abigail
+            let abigailX = (estadoJogo === "MENU") ? 100 : 48;
+            desenharModeloPixel(abigailX, 31, "abigail", expressaoAbigail);
+
+            // Vizinhos no festival
+            if (modoEfeitoEspecial === "festival") {
+                desenharModeloPixel(105, 31, "camponesA", "feliz");
+                desenharModeloPixel(120, 31, "camponesB", "feliz");
+            }
+
+            if (modoEfeitoEspecial === "vendedor") {
+                desenharCarrocaVendedor(115, 32);
+                desenharModeloPixel(98, 31, "vendedor", "neutra");
+            }
+
+            if (tratorAtivo) {
+                desenharTrator(tratorX, 35); tratorX += 1.6;
+                if (tratorX > 210) { tratorAtivo = false; modoEfeitoEspecial = "nenhum"; }
+            }
+
+            if (estacaoAtual === "outono") {
+                fill(210, 105, 30, 180);
+                for (let f of folhasOutono) {
+                    rect(f.x, f.y, 1.5, 1.5); f.y += f.velY; f.x += f.velX;
+                    if (f.y > 45) { f.y = 0; f.x = random(40, 190); }
+                }
+            }
+
+            if (modoEfeitoEspecial === "drone") {
+                fill(0, 180, 255, 160); for (let i = 0; i < 3; i++) rect(150 + (i * 14) + (frameCount % 4), 32 + (frameCount % 12), 1, 2);
+            } else if (modoEfeitoEspecial === "chuva") {
+                fill(255, 255, 255, estacaoAtual === "inverno" ? 180 : 90); rect(0, 0, 200, 75); 
+            }
+        }
+
+        function desenharModeloPixel(bx, by, tipo, expressao) {
+            let corCabelo, corPele = color(245, 200, 170), corRoupa, corCalca = color(40,40,40);
+            let piscar = (frameCount % 120 < 5);
+
+            if (tipo === "abigail") { corCabelo = color(235, 210, 110); corRoupa = color(30, 80, 190); } 
+            else if (tipo === "camponesA") { corCabelo = color(95, 60, 40); corRoupa = color(55, 135, 65); } 
+            else if (tipo === "camponesB") { corCabelo = color(220, 140, 50); corRoupa = color(155, 45, 95); } 
+            else if (tipo === "vendedor") { corCabelo = color(50); corRoupa = color(70, 75, 85); corCalca = color(20); }
+
+            fill(corCabelo); rect(bx - 1, by + 1, 9, 6); rect(bx - 2, by - 1, 11, 2); rect(bx, by - 3, 7, 2);
+            fill(corPele); rect(bx, by + 2, 7, 5); 
+            if (!piscar) {
+                fill(expressao === "preocupada" ? color(200,50,50) : color(40,110,225));
+                rect(bx + 1, by + 4, 1, 1); rect(bx + 5, by + 4, 1, 1);
+            }
+            fill(expressao === "feliz" ? color(190,40,40) : color(90,50,40)); rect(bx + 2, by + 6, 3, 1);
+            fill(corRoupa); rect(bx, by + 7, 7, 5); fill(corCalca); rect(bx, by + 12, 7, 3);
+        }
+
+        function desenharArvore(ax, ay) {
+            fill(100, 65, 35); rect(ax + 3, ay - 11, 2, 11);
+            let corCopa = estacaoAtual === "outono" ? color(210, 90, 30) : (estacaoAtual === "inverno" ? color(120, 140, 135) : color(35, 115, 55));
+            fill(corCopa); rect(ax, ay - 18, 8, 8); rect(ax + 2, ay - 21, 4, 3);
+        }
+
+        function desenharTrator(tx, ty) {
+            fill(215, 45, 45); rect(tx + 4, ty + 2, 14, 7); rect(tx + 10, ty - 3, 6, 6);
+            fill(30); rect(tx + 2, ty + 5, 4, 4); rect(tx + 13, ty + 3, 6, 6);
+            fill(200, 230, 255); rect(tx + 11, ty - 2, 3, 3);
+        }
+
+        function desenharCarrocaVendedor(cx, cy) {
+            fill(130, 85, 45); rect(cx, cy, 22, 11); fill(185, 155, 115); rect(cx + 2, cy - 6, 18, 6);
+            fill(40); ellipse(cx + 5, cy + 11, 5, 5); ellipse(cx + 17, cy + 11, 5, 5);
+        }
+
+        function atualizarERenderizarAnimais() {
+            for (let ani of animais) {
+                ani.x += ani.vx; ani.timer--;
+                if (ani.timer <= 0) { ani.vx = random([-0.12, 0, 0.12]); ani.timer = random(20, 65); }
+                if (ani.x < 10) ani.x = 10; if (ani.x > 140) ani.x = 140;
+
+                if (ani.tipo === 'galinha') {
+                    fill(235, 235, 240); rect(ani.x, ani.y, 4, 3); fill(230, 50, 50); rect(ani.x + 3, ani.y - 1, 1, 1);
+                    fill(245, 160, 20); rect(ani.x + 4, ani.y + 1, 1, 1);
+                } else if (ani.tipo === 'vaca') {
+                    fill(240, 235, 230); rect(ani.x, ani.y, 9, 6); fill(50, 45, 45); rect(ani.x + 2, ani.y + 1, 3, 2);
+                    rect(ani.x + 6, ani.y + 3, 2, 1); fill(230, 210, 200); rect(ani.x + 9, ani.y + 1, 2, 3);
+                    fill(45); rect(ani.x + 1, ani.y + 6, 1, 2); rect(ani.x + 3, ani.y + 6, 1, 2);
+                    rect(ani.x + 6, ani.y + 6, 1, 2); rect(ani.x + 8, ani.y + 6, 1, 2);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
